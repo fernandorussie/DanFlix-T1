@@ -4,7 +4,8 @@ import MoviesApi from "../services/moviesApi";
 
 class Movies extends Component {
   state = {
-    movies: []
+    movies: [],
+    filterList: []
   };
 
   // Invoca imediatamente após um componente ser montado
@@ -15,18 +16,34 @@ class Movies extends Component {
   // Função que trás os dados da API
   getMovies = async () => {
     const response = await MoviesApi.get();
-
+    
     const completeMovies = response.data.results.map((item) => {
       return {
-        ...item,
+        id: item.id,
+        title: item.title,
+        description: item.overview,
+        adult: item.adult,
         poster_path: `https://image.tmdb.org/t/p/w500${item.poster_path}`
       };
     });
 
     this.setState({
-      movies: completeMovies
+      movies: completeMovies,
+      filterList: completeMovies
     });
   };
+
+
+  handleChange = (e) =>{
+    const filterDisplay = this.state.movies.filter(item =>{
+      if(item.title.toLowerCase().includes(e.target.value.toLowerCase())){
+        return true
+      }
+    })
+    this.setState({
+      filterList: filterDisplay
+    })
+  }
 
   render() {
     return (
@@ -34,13 +51,14 @@ class Movies extends Component {
         <div>
           <h2>FILMES</h2>
         </div>
-
         <div>
-          {this.state.movies.map((item, id) => (
+          <input type="text" onChange={this.handleChange}/>
+        </div>
+        <div>
+          {this.state.filterList.map((item, id) => (
             <div key={id}>
               <p>{item.title}</p>
-              <p>{item.vote_average}</p>
-              <img src={item.poster_path} alt="" />
+              <img style={{width:"40vw"}} src={item.poster_path} alt="" />
             </div>
           ))}
         </div>

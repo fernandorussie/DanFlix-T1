@@ -1,15 +1,11 @@
 // imports
 import React, { Component } from "react";
-import axios from "axios";
-
-// url base da API que estamos consumindo
-const SeriesApi = axios.create({
-  baseURL: ""
-});
+import ShowsApi from "../services/showsApi";
 
 class Series extends Component {
   state = {
-    series: []
+    series: [],
+    filterList: []
   };
 
   // Invoca imediatamente após um componente ser montado
@@ -19,20 +15,35 @@ class Series extends Component {
 
   // Função que trás os dados da API
   getSeries = async () => {
-    const response = await SeriesApi.get();
-    console.log("Series:", response.data.results);
-
+    const response = await ShowsApi.get();
+    
     const completeSeries = response.data.results.map((item) => {
       return {
-        ...item,
+        id: item.id,
+        name: item.name,
+        description: item.overview,
+        adult: item.adult,
         poster_path: `https://image.tmdb.org/t/p/w500${item.poster_path}`
       };
     });
 
     this.setState({
-      series: completeSeries
+      series: completeSeries,
+      filterList: completeSeries
     });
   };
+
+
+  handleChange = (e) =>{
+    const filterDisplay = this.state.series.filter(item =>{
+      if(item.name.toLowerCase().includes(e.target.value.toLowerCase())){
+        return true
+      }
+    })
+    this.setState({
+      filterList: filterDisplay
+    })
+  }
 
   render() {
     return (
@@ -40,13 +51,14 @@ class Series extends Component {
         <div>
           <h2>SERIES</h2>
         </div>
-
         <div>
-          {this.state.series.map((item, id) => (
+          <input type="text" onChange={this.handleChange}/>
+        </div>
+        <div>
+          {this.state.filterList.map((item, id) => (
             <div key={id}>
               <p>{item.name}</p>
-              <p>{item.vote_average}</p>
-              <img src={item.poster_path} alt="" />
+              <img style={{width:"40vw"}} src={item.poster_path} alt="" />
             </div>
           ))}
         </div>
