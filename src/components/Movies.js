@@ -1,7 +1,16 @@
 // imports
 import React, { Component } from "react";
 import MoviesApi from "../services/moviesApi";
+import styled from "styled-components"
 
+const Img = styled.img`
+  width: 10%;
+`
+const Title = styled.p`
+  font-weight: bold;
+  font-size: 24px;
+  color:red;
+`
 class Movies extends Component {
   state = {
     movies: [],
@@ -57,8 +66,8 @@ class Movies extends Component {
         <div>
           {this.state.filterList.map((item, id) => (
             <div key={id}>
-              <p>{item.title}</p>
-              <img style={{width:"40vw"}} src={item.poster_path} alt="" />
+              <Title>{item.title}</Title>
+              <Img src={item.poster_path} alt="" />
             </div>
           ))}
         </div>
